@@ -1,0 +1,35 @@
+# Ignore build output directories
+**/bin/
+**/obj/
+
+# Ignore editor-specific and temporary files
+**/*.user
+**/*.suo
+**/*.vspscc
+**/*.vssscc
+**/*.bak
+**/*.log
+**/*.pdb
+
+# Ignore source control related files
+.git
+.gitignore
+.gitattributes
+
+# Ignore documentation and other non-essential files
+README.md
+LICENSE
+CHANGELOG.md
+
+# Ignore the Dockerfile and .dockerignore itself (if in the build context)
+Dockerfile*
+.dockerignore
+
+# Ignore NuGet package cache and related files
+.nuget/
+packages/
+*.nupkg
+global.json
+
+# Ignore Visual Studio related files
+.vs/

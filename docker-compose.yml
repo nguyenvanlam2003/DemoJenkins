@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+  web:
+    build:
+      context: .              # thư mục chứa Dockerfile
+      dockerfile: Dockerfile  # tên Dockerfile (nếu khác thì sửa)
+    container_name: test_trino_container
+    ports:
+      - "5001:8080"           # map cổng host:container
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development  # bật Swagger
+    restart: unless-stopped
