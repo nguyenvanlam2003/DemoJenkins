@@ -15,7 +15,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 
 # Mở cổng và chạy ứng dụng
-EXPOSE 8080
+EXPOSE 80
 
 COPY --from=build /app/out .
 ENTRYPOINT ["dotnet", "Test-trino.dll"]
