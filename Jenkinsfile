@@ -1,43 +1,40 @@
 pipeline {
-  agent { label 'HITC-Worker' }
+  agent any
+  environment {
+    DEPLOY_PATH = "/home/deploy_demo/myapp"
+    GIT_REPO = "git@github.com:nguyenvanlam2003/DemoJenkins.git"
+    SERVER = "deploy_demo@192.168.33.128"
+  }
 
   stages {
-    stage('Info') {
+    stage('Pull code') {
       steps {
-        echo '🔍 Running on HITC-Worker'
-      }
-    }
-
-    stage('Deploy with Docker Compose') {
-      steps {
-        // Thư mục làm việc mặc định là $WORKSPACE, nơi bạn đã checkout code
-        dir("${env.WORKSPACE}") {
+        sshagent(credentials: ['deploy_demo-key']) {
           sh '''
-            # Dừng & remove mọi container cũ (bỏ lỗi nếu không có)
-            docker compose down --remove-orphans || true
-
-            # Xây dựng image (nếu Dockerfile có thay đổi) và khởi lại
-            docker compose up -d --build
-
-            # Hiển thị trạng thái container
-            docker compose ps
-
-            # Dọn dẹp toàn bộ resource không dùng
-            docker system prune -f
-            docker volume prune -f
-            docker image prune -a -f
+            ssh -o StrictHostKeyChecking=no $SERVER << 'EOF'
+              if [ ! -d $DEPLOY_PATH ]; then
+                git clone $GIT_REPO $DEPLOY_PATH
+              else
+                cd $DEPLOY_PATH && git pull origin main
+              fi
+            EOF
           '''
         }
       }
     }
-  }
 
-  post {
-    success {
-      echo '🎉 Deployment completed successfully on HITC-Worker'
-    }
-    failure {
-      echo '❌ Deployment failed – check the console output above'
+    stage('Build and Deploy') {
+      steps {
+        sshagent(credentials: ['deploy_demo-key']) {
+          sh '''
+            ssh -o StrictHostKeyChecking=no $SERVER << 'EOF'
+              cd $DEPLOY_PATH
+              docker-compose down
+              docker-compose up -d --build
+            EOF
+          '''
+        }
+      }
     }
   }
 }
