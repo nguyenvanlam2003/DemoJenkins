@@ -1,5 +1,5 @@
 pipeline {
-  agent { label 'HITC-Worker' }
+  agent any
 
   stages {
     stage('Info') {
