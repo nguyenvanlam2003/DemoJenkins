@@ -1,40 +1,43 @@
 pipeline {
-  agent any
-  environment {
-    DEPLOY_PATH = "/home/deploy_demo/myapp"
-    GIT_REPO = "git@github.com:nguyenvanlam2003/DemoJenkins.git"
-    SERVER = "deploy_demo@192.168.33.128"
-  }
+  agent { label 'HITC-Worker' }
 
   stages {
-    stage('Pull code') {
+    stage('Info') {
       steps {
-        sshagent(['deploy_demo-key']) {
-          sh """
-            ssh -o StrictHostKeyChecking=no ${SERVER} << 'EOF'
-              if [ ! -d ${DEPLOY_PATH} ]; then
-                git clone ${GIT_REPO} ${DEPLOY_PATH}
-              else
-                cd ${DEPLOY_PATH} && git pull origin main
-              fi
-            EOF
-          """
-        }
+        echo '🔍 Running on HITC-Worker'
       }
     }
 
-    stage('Build and Deploy') {
+    stage('Deploy with Docker Compose') {
       steps {
-        sshagent(['deploy_demo-key']) {
-          sh """
-            ssh -o StrictHostKeyChecking=no ${SERVER} << 'EOF'
-              cd ${DEPLOY_PATH}
-              docker-compose down
-              docker-compose up -d --build
-            EOF
-          """
+        // Thư mục làm việc mặc định là $WORKSPACE, nơi bạn đã checkout code
+        dir("${env.WORKSPACE}") {
+          sh '''
+            # Dừng & remove mọi container cũ (bỏ lỗi nếu không có)
+            docker compose down --remove-orphans || true
+
+            # Xây dựng image (nếu Dockerfile có thay đổi) và khởi lại
+            docker compose up -d --build
+
+            # Hiển thị trạng thái container
+            docker compose ps
+
+            # Dọn dẹp toàn bộ resource không dùng
+            docker system prune -f
+            docker volume prune -f
+            docker image prune -a -f
+          '''
         }
       }
+    }
+  }
+
+  post {
+    success {
+      echo '🎉 Deployment completed successfully on HITC-Worker'
+    }
+    failure {
+      echo '❌ Deployment failed – check the console output above'
     }
   }
 }
