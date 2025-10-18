@@ -13,6 +13,9 @@ RUN dotnet publish -o out
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
+# ⚠️ Quan trọng: để ASP.NET lắng nghe đúng cổng container
+ENV ASPNETCORE_URLS=http://+:80
+ENV ASPNETCORE_ENVIRONMENT=Development
 
 # Mở cổng và chạy ứng dụng
 EXPOSE 80
