@@ -11,6 +11,4 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development  # bật Swagger
       - ASPNETCORE_URLS=http://+:8999
-    volumes:
-      - /var/lib/jenkins/configs/ci-docker-demo:/app:ro
     restart: unless-stopped
