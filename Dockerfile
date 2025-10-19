@@ -1,21 +1,17 @@
+# Build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
-# Copy everything
+# Copy toàn bộ mã nguồn và build
 COPY . ./
+RUN dotnet publish /app/GolfService.Api/ -c Release -o /app/publish
 
-# Restore as distinct layers
-RUN dotnet restore
-
-# Build and publish a release
-RUN dotnet publish -o out
-
-# Build runtime image
+# Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 # ⚠️ Quan trọng: để ASP.NET lắng nghe đúng cổng container
-ENV ASPNETCORE_URLS=http://+:80
-ENV ASPNETCORE_ENVIRONMENT=Development
+# ENV ASPNETCORE_URLS=http://+:80
+# ENV ASPNETCORE_ENVIRONMENT=Development
 
 # Mở cổng và chạy ứng dụng
 EXPOSE 80
