@@ -4,7 +4,7 @@ WORKDIR /app
 
 # Copy toàn bộ mã nguồn và build
 COPY . ./
-RUN dotnet publish /app/GolfService.Api/ -c Release -o /app/publish
+RUN dotnet publish /app/Test-trino/ -c Release -o /app/publish
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
@@ -16,5 +16,5 @@ WORKDIR /app
 # Mở cổng và chạy ứng dụng
 EXPOSE 80
 
-COPY --from=build /app/out .
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "Test-trino.dll"]
