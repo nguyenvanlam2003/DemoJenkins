@@ -4,8 +4,8 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy code (workspace)
-COPY workspace/ci-docker-demo/. .
+# Copy code
+COPY . ./
 
 # Build project
 RUN dotnet publish Test-trino/Test-trino.csproj -c Release -o /app/publish
