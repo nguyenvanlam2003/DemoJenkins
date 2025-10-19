@@ -10,4 +10,5 @@ services:
       - "5001:8999"           # map cổng host:container
     environment:
       - ASPNETCORE_ENVIRONMENT=Development  # bật Swagger
+      - ASPNETCORE_URLS=http://+:8999
     restart: unless-stopped
