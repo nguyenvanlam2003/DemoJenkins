@@ -14,7 +14,7 @@ WORKDIR /app
 # ENV ASPNETCORE_ENVIRONMENT=Development
 
 # Mở cổng và chạy ứng dụng
-EXPOSE 80
+EXPOSE 8999
 
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "Test-trino.dll"]
