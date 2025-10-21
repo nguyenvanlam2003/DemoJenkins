@@ -1,5 +1,5 @@
 pipeline {
-  agent any
+  agent { label 'lap-server' }
 
   stages {
     stage('Info') {
