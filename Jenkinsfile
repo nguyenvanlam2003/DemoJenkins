@@ -2,11 +2,20 @@ pipeline {
   agent { label 'lap-server' }
 
   stages {
-    stage('Info') {
+    stage('Checkout') {
       steps {
-        echo '🔍 Running on HITC-Worker'
+        echo '📦 Checking out source code...'
+        checkout scm
       }
     }
+
+    stage('Info') {
+      steps {
+        echo "🔍 Running on ${env.NODE_NAME}"
+        sh 'ls -la' // để bạn thấy thư mục code đã clone về
+      }
+    }
+
 
     stage('Deploy with Docker Compose') {
       steps {
